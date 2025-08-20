@@ -2,9 +2,7 @@
 # define H_PHILOSOPHER
 
 # include <pthread.h>
-#include <sys/time.h>
-
-
+# include <sys/time.h>
 
 typedef enum e_action
 {
@@ -14,13 +12,25 @@ typedef enum e_action
 	THINK,
 }					t_action;
 
+typedef struct fork
+{
+ pthread_mutex_t lock_fork;
+ int fork;
+} t_fork;
+
 typedef struct s_pnj
 
 {
 	pthread_t		value_thread;
+	long int		rest_time_to_die;
+	long int		rest_time_to_eat;
+	long int		rest_time_to_sleep;
+	long int		rest_number_eat;
 	int				philo_number;
+	t_fork				attr_left_fork;
+	t_fork				attr_right_fork;
 	int				action;
-	struct s_pnj	*next;
+	struct timeval	time_start;
 }					t_pnj;
 
 typedef struct s_philo
@@ -29,9 +39,8 @@ typedef struct s_philo
 	long int		time_to_die;
 	long int		time_to_eat;
 	long int		time_to_sleep;
-	long int		number_of_times_eahc_philosopher_must_eat;
-	struct timeval	time_start;
-	t_pnj			*philo_uno;
+	long int		number_of_times_each_philosopher_must_eat;
 	t_pnj			*philosophers;
+	t_fork				*forks;
 }					t_philo;
 #endif

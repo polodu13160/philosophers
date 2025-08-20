@@ -1,8 +1,10 @@
 .phony =all re clean fclean
 
 FLAGS = -Wall -Wextra -g3 -MMD -MP -Iincludes/
+FLAGS_DEBUG = -DDEBUG=1
 NAME = philo
-FILES = main
+FILES = main \
+		debug
 
 OBJ_DIR = objects/
 SRC_DIR = sources/
@@ -11,6 +13,9 @@ OBJS = $(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
 DEPS = $(addprefix $(OBJ_DIR), $(addsuffix .d, $(FILES)))
 
 all: $(NAME)
+
+debug: FLAGS += $(FLAGS_DEBUG)
+debug: fclean all
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
