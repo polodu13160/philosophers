@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/22 02:47:21 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/22 17:30:51 by pauldepetri      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,24 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-long int	calc_time(long time_mili_start)
+long int time_now(void)
 {
-	long int		time_mili;
 	struct timeval	time_now;
 
 	if (gettimeofday(&time_now, NULL) <= -1)
-	{
 		return (-1);
-	}
-	time_mili = (time_now.tv_sec * 1000 + time_now.tv_usec / 1000)
+	return (time_now.tv_sec * 1000 + time_now.tv_usec / 1000);
+}
+
+long int	calc_time(long time_mili_start)
+{
+	long int		time_mili;
+	long int		v_time_now;
+
+	v_time_now = time_now();
+	if (v_time_now == -1)
+		return (-1);
+	time_mili = v_time_now
 		- time_mili_start;
 	return (time_mili);
 }
@@ -39,58 +47,94 @@ void	*print_error_return_null(char *message)
 	return (NULL);
 }
 
-void	*ft_message(t_pnj *philo, long int time_mili_start)
+
+
+int	ft_message(t_pnj *philo, long int time_mili_start)
 {
-	long int	time_now_in_mili;
+	long int	time_now_in_mili_at_start;
 
 	pthread_mutex_lock(philo->lock_print_action);
 	// verifier aussi ici si le temps est bon;
-	time_now_in_mili = calc_time(time_mili_start);
-	if (time_now_in_mili <= -1)
-		return (print_error_return_null("error Time in thread"));
-	if (philo->action == SLEEP)
-		printf("%lu %d is sleeping\n", time_now_in_mili, philo->philo_number);
-	if (philo->action == EAT)
+	time_now_in_mili_at_start = calc_time(time_mili_start);
+	if (time_now_in_mili_at_start <= -1)
 	{
-		printf("%lu %d is eating\n", time_now_in_mili, philo->philo_number);
+		print_error_return_null("error Time in thread");
+		return 2;
 	}
-	if (philo->action == FORK)
-		printf("%lu %d has taken a fork\n", time_now_in_mili,
+		
+	if (philo->action->action == SLEEP)
+		printf("%lu %d is sleeping\n", time_now_in_mili_at_start, philo->philo_number);
+	if (philo->action->action == EAT)
+	{
+		printf("%lu %d is eating\n", time_now_in_mili_at_start, philo->philo_number);
+		philo->last_time_to_eat = time_now();
+		philo->rest_number_eat--;
+		if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
+		{
+			pthread_mutex_unlock(philo->lock_print_action);
+			if  (philo->last_time_to_eat == -1)
+			{
+				print_error_return_null("error Time in thread");
+				return 2;
+			}
+			return 1;
+		}
+			
+		philo->last_time_to_eat = time_now();
+		if (philo->last_time_to_eat == -1)
+		{
+			print_error_return_null("error Time in thread");
+			return 2;
+		}
+			
+	}
+	if (philo->action->action == FORK)
+		printf("%lu %d has taken a fork\n", time_now_in_mili_at_start,
 			philo->philo_number);
-	if (philo->action == THINK)
-		printf("%lu %d is thinking\n", time_now_in_mili, philo->philo_number);
+	if (philo->action->action == THINK)
+		printf("%lu %d is thinking\n", time_now_in_mili_at_start, philo->philo_number);
 	pthread_mutex_unlock(philo->lock_print_action);
-	return (NULL);
+	return (0);
 }
 
 void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 {
-	long int	time_max_sleep;
-	long int	time_max_to_die;
+	// long int	time_max_sleep;
+	// long int	time_max_to_die;
 	int			a;
 
 	a = 0;
-	time_max_to_die = philo->rest_time_to_die;
-	time_max_sleep = philo->time_to_sleep;
-	philo->rest_time_to_eat = 0;
-	philo->action = INIT;
+	// time_max_to_die = philo->rest_time_to_die;
+	// time_max_sleep = philo->time_to_sleep;
+	philo->last_time_to_eat = time_mili_start;
 	while (1)
 	{
-		if (philo->action == SLEEP)
-		{
-			usleep(200000);
-		}
+		pthread_mutex_lock(philo->action->lock_action);
 		if (a == 0)
-			philo->action = THINK;
+			philo->action->action = THINK;
 		if (a == 1)
-			philo->action = EAT;
+		{
+			philo->action->action = EAT;
+		}
 		if (a == 2)
 		{
-			philo->action = SLEEP;
+			philo->action->action = SLEEP;
 			a = -1;
 		}
+		if (ft_message(philo, time_mili_start) > 0)
+		{
+			pthread_mutex_unlock(philo->action->lock_action);
+			return NULL;
+		}
+		if (philo->action->action == SLEEP)
+		{
+			pthread_mutex_unlock(philo->action->lock_action);
+			usleep(philo->time_to_sleep * 1000);
+		}
+		else	
+			pthread_mutex_unlock(philo->action->lock_action);
 		a++;
-		ft_message(philo, time_mili_start);
+		
 	}
 }
 
@@ -234,6 +278,33 @@ void	attr_forks_philo(t_pnj *philosophers, t_fork *forks,
 	}
 }
 
+t_action_mutex  *init_action_mutex(long int nb_philo)
+{
+	t_action_mutex *malloc_action;
+	pthread_mutex_t *malloc_action_mutex;
+	malloc_action = malloc(sizeof(t_action_mutex) * nb_philo);
+	malloc_action_mutex = malloc(sizeof(pthread_mutex_t) * nb_philo);
+	
+	if (malloc_action == NULL || malloc_action_mutex == NULL)
+	{
+		if (malloc_action != NULL)
+			free(malloc_action);
+		if (malloc_action_mutex != NULL)
+			free(malloc_action_mutex);
+		return (NULL);
+	}
+	int i;
+	i = 0;
+	while (i < nb_philo)
+	{
+		pthread_mutex_init(&malloc_action_mutex[i],NULL);
+		malloc_action[i].lock_action = &malloc_action_mutex[i];
+		malloc_action[i].action = INIT;
+		i++;
+	}
+	return malloc_action;
+}
+
 int	main(int argc, char **argv)
 {
 	t_philo list;
@@ -261,6 +332,8 @@ int	main(int argc, char **argv)
 	list.philosophers = malloc(sizeof(t_pnj) * (list.number_of_philosophers
 				+ 1));
 	list.forks = init_fork(list.number_of_philosophers);
+	list.action_mutex = init_action_mutex(list.number_of_philosophers);
+	
 	if (list.philosophers == NULL || list.forks == NULL)
 	{
 		if (list.philosophers != NULL)
@@ -270,17 +343,19 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	pthread_mutex_init(&mutex_print, NULL);
+	
 	while (i < list.number_of_philosophers)
 	{
 		list.philosophers[i].philo_number = i + 1;
 		list.philosophers[i].rest_time_to_die = list.time_to_die;
-		list.philosophers[i].rest_time_to_eat = list.time_to_eat;
 		list.philosophers[i].time_to_sleep = list.time_to_sleep;
 		list.philosophers[i].rest_number_eat = list.number_of_times_each_philosopher_must_eat;
 		list.philosophers[i].lock_print_action = &mutex_print;
+		list.philosophers[i].action = &list.action_mutex[i];
 		i++;
 	}
 	list.philosophers[i].philo_number = -1;
+	
 	attr_forks_philo(list.philosophers, list.forks,
 		list.number_of_philosophers);
 	// printf_philo(list.philosophers);
@@ -304,11 +379,22 @@ int	main(int argc, char **argv)
 	// if (DEBUG == 1)
 	// 	printf_philo(list.philosophers);
 	i = 0;
-	while (i < list.number_of_philosophers)
+	while (list.philosophers[i].philo_number != -1)
 	{
+		
+		// if (list.philosophers[i].last_time_to_eat )
+		
+	
+
+
+
+
+
+
+	
 		if (pthread_join(list.philosophers[i].value_thread, NULL))
 		{
-			if (list.philosophers[i].action != EAT)
+			if (list.philosophers[i].action->action != EAT)
 			{
 				free_philo(list.philosophers);
 				mutex_destroy_tab_forks_and_free(list.forks);
@@ -321,6 +407,9 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	free_philo(list.philosophers);
+	free(list.action_mutex->lock_action);
+	
+	free(list.action_mutex);
 	mutex_destroy_tab_forks_and_free(list.forks);
 	pthread_mutex_destroy(&mutex_print);
 

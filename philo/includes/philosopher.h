@@ -13,7 +13,13 @@ typedef enum e_action
 	THINK,
 }					t_action;
 
-typedef struct fork
+typedef struct t_action_mutex
+{
+	pthread_mutex_t *lock_action;
+	int 			action;
+}				t_action_mutex;
+
+typedef struct t_fork
 {
 	pthread_mutex_t	*lock_fork;
 	int				fork;
@@ -25,14 +31,14 @@ typedef struct s_pnj
 {
 	pthread_t		value_thread;
 	long int		rest_time_to_die;
-	long int		rest_time_to_eat;
+	long int		last_time_to_eat;
 	long int		time_to_sleep;
 	long int		rest_number_eat;
 	int				philo_number;
 	pthread_mutex_t	*lock_print_action;
 	t_fork			*attr_left_fork;
 	t_fork			*attr_right_fork;
-	int				action;
+	t_action_mutex	*action;
 	struct timeval	time_start;
 }					t_pnj;
 
@@ -43,6 +49,7 @@ typedef struct s_philo
 	long int		time_to_eat;
 	long int		time_to_sleep;
 	long int		number_of_times_each_philosopher_must_eat;
+	t_action_mutex  *action_mutex;
 	t_pnj			*philosophers;
 	t_fork			*forks;
 }					t_philo;
