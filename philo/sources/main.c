@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/21 22:47:00 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/22 02:47:21 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,56 +39,58 @@ void	*print_error_return_null(char *message)
 	return (NULL);
 }
 
-void	*ft_message(int action, long int time_start, int philo_number,
-		pthread_mutex_t *lock_print)
+void	*ft_message(t_pnj *philo, long int time_mili_start)
 {
 	long int	time_now_in_mili;
 
-	pthread_mutex_lock(lock_print);
-	time_now_in_mili = calc_time(time_start);
+	pthread_mutex_lock(philo->lock_print_action);
+	// verifier aussi ici si le temps est bon;
+	time_now_in_mili = calc_time(time_mili_start);
 	if (time_now_in_mili <= -1)
 		return (print_error_return_null("error Time in thread"));
-	if (action == SLEEP)
-		printf("%lu %d is sleeping\n", time_now_in_mili, philo_number);
-	if (action == EAT)
-		printf("%lu %d is eating\n", time_now_in_mili, philo_number);
-	if (action == FORK)
-		printf("%lu %d has taken a fork\n", time_now_in_mili, philo_number);
-	if (action == THINK)
-		printf("%lu %d is thinking\n", time_now_in_mili, philo_number);
-	pthread_mutex_unlock(lock_print);
+	if (philo->action == SLEEP)
+		printf("%lu %d is sleeping\n", time_now_in_mili, philo->philo_number);
+	if (philo->action == EAT)
+	{
+		printf("%lu %d is eating\n", time_now_in_mili, philo->philo_number);
+	}
+	if (philo->action == FORK)
+		printf("%lu %d has taken a fork\n", time_now_in_mili,
+			philo->philo_number);
+	if (philo->action == THINK)
+		printf("%lu %d is thinking\n", time_now_in_mili, philo->philo_number);
+	pthread_mutex_unlock(philo->lock_print_action);
 	return (NULL);
 }
 
 void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 {
-	long int	time_eat;
-	long int	time_sleep;
+	long int	time_max_sleep;
+	long int	time_max_to_die;
 	int			a;
 
 	a = 0;
-	time_eat = philo->rest_time_to_eat;
-	time_sleep = philo->rest_time_to_sleep;
+	time_max_to_die = philo->rest_time_to_die;
+	time_max_sleep = philo->time_to_sleep;
+	philo->rest_time_to_eat = 0;
+	philo->action = INIT;
 	while (1)
 	{
-		if (a == 0 && ++a)
-			ft_message(THINK, time_mili_start, philo->philo_number,
-				philo->lock_print_action);
-		else if (a == 1 && ++a)
+		if (philo->action == SLEEP)
 		{
-			ft_message(EAT, time_mili_start, philo->philo_number,
-				philo->lock_print_action);
-			philo->rest_time_to_eat = time_eat;
-			philo->rest_number_eat--;
-			if (philo->rest_number_eat == 0)
-				return (NULL);
+			usleep(200000);
 		}
-		else if (a == 2 && ++a)
+		if (a == 0)
+			philo->action = THINK;
+		if (a == 1)
+			philo->action = EAT;
+		if (a == 2)
 		{
-			ft_message(SLEEP, time_mili_start, philo->philo_number,
-				philo->lock_print_action);
-			a = 0;
+			philo->action = SLEEP;
+			a = -1;
 		}
+		a++;
+		ft_message(philo, time_mili_start);
 	}
 }
 
@@ -230,7 +232,6 @@ void	attr_forks_philo(t_pnj *philosophers, t_fork *forks,
 		}
 		i++;
 	}
-	// printf_forks(forks);
 }
 
 int	main(int argc, char **argv)
@@ -274,7 +275,7 @@ int	main(int argc, char **argv)
 		list.philosophers[i].philo_number = i + 1;
 		list.philosophers[i].rest_time_to_die = list.time_to_die;
 		list.philosophers[i].rest_time_to_eat = list.time_to_eat;
-		list.philosophers[i].rest_time_to_sleep = list.time_to_sleep;
+		list.philosophers[i].time_to_sleep = list.time_to_sleep;
 		list.philosophers[i].rest_number_eat = list.number_of_times_each_philosopher_must_eat;
 		list.philosophers[i].lock_print_action = &mutex_print;
 		i++;

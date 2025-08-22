@@ -6,6 +6,7 @@
 
 typedef enum e_action
 {
+	INIT,
 	FORK,
 	EAT,
 	SLEEP,
@@ -25,7 +26,7 @@ typedef struct s_pnj
 	pthread_t		value_thread;
 	long int		rest_time_to_die;
 	long int		rest_time_to_eat;
-	long int		rest_time_to_sleep;
+	long int		time_to_sleep;
 	long int		rest_number_eat;
 	int				philo_number;
 	pthread_mutex_t	*lock_print_action;
