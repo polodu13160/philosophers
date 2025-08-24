@@ -11,6 +11,7 @@ typedef enum e_action
 	EAT,
 	SLEEP,
 	THINK,
+	STOP,
 }					t_action;
 
 typedef struct t_action_mutex
@@ -38,6 +39,7 @@ typedef struct s_pnj
 	pthread_mutex_t	*lock_print_action;
 	t_fork			*attr_left_fork;
 	t_fork			*attr_right_fork;
+	long int		number_of_philos;
 	t_action_mutex	*action;
 	struct timeval	time_start;
 }					t_pnj;

@@ -6,7 +6,7 @@
 /*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/22 17:30:51 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/25 01:20:52 by pauldepetri      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ int	ft_message(t_pnj *philo, long int time_mili_start)
 		printf("%lu %d is eating\n", time_now_in_mili_at_start, philo->philo_number);
 		philo->last_time_to_eat = time_now();
 		philo->rest_number_eat--;
+		pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
+		pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
 		if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
 		{
 			pthread_mutex_unlock(philo->lock_print_action);
@@ -97,6 +99,22 @@ int	ft_message(t_pnj *philo, long int time_mili_start)
 	return (0);
 }
 
+int		eat_philo(t_pnj *philo)
+{
+	pthread_mutex_unlock(philo->action->lock_action);
+	if (philo->philo_number % 2 == 0)
+		pthread_mutex_lock(philo->attr_left_fork->lock_fork);
+	else 
+		pthread_mutex_lock(philo->attr_right_fork->lock_fork);
+	if (philo->philo_number % 2 == 0)
+		pthread_mutex_lock(philo->attr_right_fork->lock_fork);
+	else 
+		pthread_mutex_lock(philo->attr_left_fork->lock_fork);
+	pthread_mutex_lock(philo->action->lock_action);
+	return 1;
+	
+}
+
 void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 {
 	// long int	time_max_sleep;
@@ -114,7 +132,15 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 			philo->action->action = THINK;
 		if (a == 1)
 		{
+			if (philo->number_of_philos > 1)
+				eat_philo(philo);
+			else 
+			{
+				printf("philo can't eat with 1 fork\n");
+				a++;
+			}	
 			philo->action->action = EAT;
+			
 		}
 		if (a == 2)
 		{
@@ -134,7 +160,6 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 		else	
 			pthread_mutex_unlock(philo->action->lock_action);
 		a++;
-		
 	}
 }
 
@@ -347,6 +372,7 @@ int	main(int argc, char **argv)
 	while (i < list.number_of_philosophers)
 	{
 		list.philosophers[i].philo_number = i + 1;
+		list.philosophers[i].number_of_philos = list.number_of_philosophers;
 		list.philosophers[i].rest_time_to_die = list.time_to_die;
 		list.philosophers[i].time_to_sleep = list.time_to_sleep;
 		list.philosophers[i].rest_number_eat = list.number_of_times_each_philosopher_must_eat;
