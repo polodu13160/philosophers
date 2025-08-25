@@ -12,6 +12,7 @@ typedef enum e_action
 	SLEEP,
 	THINK,
 	STOP,
+	DEAD
 }					t_action;
 
 typedef struct t_action_mutex
@@ -23,6 +24,7 @@ typedef struct t_action_mutex
 typedef struct t_fork
 {
 	pthread_mutex_t	*lock_fork;
+	int				lock_bool;
 	int				fork;
 	pthread_mutex_t *table_mutex;
 }					t_fork;
