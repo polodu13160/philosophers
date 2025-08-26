@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/26 17:54:49 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/26 18:46:22 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,28 +85,26 @@ int	ft_message(t_pnj *philo, long int time_mili_start)
 			philo->philo_number);
 	if (philo->action->action == EAT)
 	{
-		printf("%lu %d is eating\n", time_now_in_mili_at_start,
-			philo->philo_number);
+		if (philo->rest_number_eat > 0)
+		{
+			printf("%lu %d is eating\n", time_now_in_mili_at_start,
+		philo->philo_number);
 		philo->last_time_to_eat = time_now();
+		}
 		philo->rest_number_eat--;
 		pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
 		pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
 		philo->have_forks = 0;
-		if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
+		if (philo->rest_number_eat <= 0 || philo->last_time_to_eat == -1)
 		{
-			pthread_mutex_unlock(philo->lock_print_action);
 			if (philo->last_time_to_eat == -1)
 			{
 				print_error_return_null("error Time in thread");
+				pthread_mutex_unlock(philo->lock_print_action);
 				return (2);
 			}
+			pthread_mutex_unlock(philo->lock_print_action);
 			return (1);
-		}
-		philo->last_time_to_eat = time_now();
-		if (philo->last_time_to_eat == -1)
-		{
-			print_error_return_null("error Time in thread");
-			return (2);
 		}
 	}
 	if (philo->action->action == FORK)
@@ -144,7 +142,6 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 	a = 0;
 	// time_max_to_die = philo->rest_time_to_die;
 	// time_max_sleep = philo->time_to_sleep;
-	philo->last_time_to_eat = time_mili_start;
 	while (1)
 	{
 		pthread_mutex_lock(philo->action->lock_action);
@@ -181,7 +178,10 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 		{
 			pthread_mutex_unlock(philo->action->lock_action);
 			if (ft_message(philo, time_mili_start) > 0)
+			{
 				return (NULL);
+			}
+				
 			pthread_mutex_lock(philo->action->lock_action);
 		}
 		if (philo->action->action == SLEEP)
@@ -405,7 +405,6 @@ int	main(int argc, char **argv)
 	{
 		list.philosophers[i].philo_number = i + 1;
 		list.philosophers[i].number_of_philos = list.number_of_philosophers;
-		list.philosophers[i].rest_time_to_die = list.time_to_die;
 		list.philosophers[i].time_to_sleep = list.time_to_sleep;
 		list.philosophers[i].rest_number_eat = list.number_of_times_each_philosopher_must_eat;
 		list.philosophers[i].lock_print_action = &mutex_print;
@@ -431,6 +430,8 @@ int	main(int argc, char **argv)
 	while (list.philosophers[i].philo_number != -1)
 	{
 		list.philosophers[i].time_start = time_start;
+		list.philosophers[i].last_time_to_eat =  time_start.tv_sec * 1000
+		+ time_start.tv_usec / 1000;
 		pthread_create(&list.philosophers[i].value_thread, NULL,
 			to_be_philosopher, &list.philosophers[i]);
 		i++;
@@ -447,10 +448,12 @@ int	main(int argc, char **argv)
 			break ;
 
 		i = 0;
+		count_nb_finish = 0;
+		pthread_mutex_lock(&mutex_print);
 		while (i < list.number_of_philosophers)
 		{
-			pthread_mutex_lock(&mutex_print);
-			if (list.philosophers[i].rest_number_eat == 0)
+			
+			if ((list.number_of_times_each_philosopher_must_eat == 0 && list.philosophers[i].rest_number_eat == -1)  || (list.number_of_times_each_philosopher_must_eat > 0 && list.philosophers[i].rest_number_eat == 0))
 				count_nb_finish++;
 			if (list.philosophers[i].rest_number_eat > 0 && (time_now()
 					- list.philosophers[i].last_time_to_eat) > list.time_to_die)
@@ -467,16 +470,18 @@ int	main(int argc, char **argv)
 					i++;
 				}
 				i = -1000;
-				pthread_mutex_unlock(&mutex_print);
 				break ;
 			}
 			i++;
-			pthread_mutex_unlock(&mutex_print);
+			
 		}
+		pthread_mutex_unlock(&mutex_print);
+		usleep(1);
 	}
 	i = 0;
 	while (list.philosophers[i].philo_number != -1)
 	{
+		// printf("why is philo ? %d\n",list.philosophers[i].philo_number);
 		if (pthread_join(list.philosophers[i].value_thread, NULL))
 		{
 		}
