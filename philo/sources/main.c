@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/26 17:44:25 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/26 17:54:49 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ int	eat_philo(t_pnj *philo)
 		pthread_mutex_lock(philo->attr_left_fork->lock_fork);
 	philo->have_forks = 1;
 	pthread_mutex_lock(philo->action->lock_action);
-	
 	return (1);
 }
 
@@ -178,13 +177,13 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 			philo->action->action = SLEEP;
 			a = -1;
 		}
-		pthread_mutex_unlock(philo->action->lock_action);
-		if (philo->action->action != STOP && ft_message(philo,
-				time_mili_start) > 0)
+		if (philo->action->action != STOP)
 		{
-			return (NULL);
+			pthread_mutex_unlock(philo->action->lock_action);
+			if (ft_message(philo, time_mili_start) > 0)
+				return (NULL);
+			pthread_mutex_lock(philo->action->lock_action);
 		}
-		pthread_mutex_lock(philo->action->lock_action);
 		if (philo->action->action == SLEEP)
 		{
 			pthread_mutex_unlock(philo->action->lock_action);
