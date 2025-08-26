@@ -32,8 +32,10 @@ typedef struct s_pnj
 
 {
 	pthread_t		value_thread;
+	int				finish;
 	long int		rest_time_to_die;
 	long int		last_time_to_eat;
+	long int		time_to_eat;
 	long int		time_to_sleep;
 	long int		rest_number_eat;
 	int				philo_number;
