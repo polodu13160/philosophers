@@ -24,7 +24,6 @@ typedef struct t_action_mutex
 typedef struct t_fork
 {
 	pthread_mutex_t	*lock_fork;
-	int				lock_bool;
 	int				fork;
 	pthread_mutex_t *table_mutex;
 }					t_fork;
@@ -42,6 +41,7 @@ typedef struct s_pnj
 	t_fork			*attr_left_fork;
 	t_fork			*attr_right_fork;
 	long int		number_of_philos;
+	int				have_forks;
 	t_action_mutex	*action;
 	struct timeval	time_start;
 }					t_pnj;

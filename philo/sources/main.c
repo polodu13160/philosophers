@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
+/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/25 19:18:14 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/26 17:44:25 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-long int time_now(void)
+long int	time_now(void)
 {
 	struct timeval	time_now;
 
@@ -30,14 +30,13 @@ long int time_now(void)
 
 long int	calc_time(long time_mili_start)
 {
-	long int		time_mili;
-	long int		v_time_now;
+	long int	time_mili;
+	long int	v_time_now;
 
 	v_time_now = time_now();
 	if (v_time_now == -1)
 		return (-1);
-	time_mili = v_time_now
-		- time_mili_start;
+	time_mili = v_time_now - time_mili_start;
 	return (time_mili);
 }
 
@@ -46,106 +45,103 @@ void	*print_error_return_null(char *message)
 	perror(message);
 	return (NULL);
 }
-int check_dead_or_stop(t_pnj *philo)
+int	check_dead_or_stop(t_pnj *philo)
 {
-	int return_value;
-	
+	int	return_value;
+
 	return_value = 0;
 	pthread_mutex_unlock(philo->lock_print_action);
 	usleep(5);
 	pthread_mutex_lock(philo->lock_print_action);
 	if (philo->action->action == DEAD || philo->action->action == STOP)
 		return_value = 1;
-	
-	return return_value;
+	return (return_value);
 }
-
-
 
 int	ft_message(t_pnj *philo, long int time_mili_start)
 {
 	long int	time_now_in_mili_at_start;
+
 	pthread_mutex_lock(philo->lock_print_action);
 	if (check_dead_or_stop(philo) == 1)
 	{
-		return 1;
+		pthread_mutex_unlock(philo->lock_print_action);
+		if (philo->have_forks == 1)
+		{
+			pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
+			pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
+		}
+		return (1);
 	}
-		
-	
-
-	
 	// verifier aussi ici si le temps est bon;
 	time_now_in_mili_at_start = calc_time(time_mili_start);
 	if (time_now_in_mili_at_start <= -1)
 	{
 		print_error_return_null("error Time in thread");
-		return 2;
+		return (2);
 	}
-		
 	if (philo->action->action == SLEEP)
-		printf("%lu %d is sleeping\n", time_now_in_mili_at_start, philo->philo_number);
+		printf("%lu %d is sleeping\n", time_now_in_mili_at_start,
+			philo->philo_number);
 	if (philo->action->action == EAT)
 	{
-		printf("%lu %d is eating\n", time_now_in_mili_at_start, philo->philo_number);
+		printf("%lu %d is eating\n", time_now_in_mili_at_start,
+			philo->philo_number);
 		philo->last_time_to_eat = time_now();
 		philo->rest_number_eat--;
 		pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
 		pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
+		philo->have_forks = 0;
 		if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
 		{
 			pthread_mutex_unlock(philo->lock_print_action);
-			if  (philo->last_time_to_eat == -1)
+			if (philo->last_time_to_eat == -1)
 			{
 				print_error_return_null("error Time in thread");
-				return 2;
+				return (2);
 			}
-			return 1;
+			return (1);
 		}
-			
 		philo->last_time_to_eat = time_now();
 		if (philo->last_time_to_eat == -1)
 		{
 			print_error_return_null("error Time in thread");
-			return 2;
+			return (2);
 		}
-			
 	}
 	if (philo->action->action == FORK)
 		printf("%lu %d has taken a fork\n", time_now_in_mili_at_start,
 			philo->philo_number);
 	if (philo->action->action == THINK)
-		printf("%lu %d is thinking\n", time_now_in_mili_at_start, philo->philo_number);
+		printf("%lu %d is thinking\n", time_now_in_mili_at_start,
+			philo->philo_number);
 	pthread_mutex_unlock(philo->lock_print_action);
 	return (0);
 }
 
-int		eat_philo(t_pnj *philo)
+int	eat_philo(t_pnj *philo)
 {
 	pthread_mutex_unlock(philo->action->lock_action);
 	if (philo->philo_number % 2 == 0)
 		pthread_mutex_lock(philo->attr_left_fork->lock_fork);
-	else 
+	else
 		pthread_mutex_lock(philo->attr_right_fork->lock_fork);
 	if (philo->philo_number % 2 == 0)
 		pthread_mutex_lock(philo->attr_right_fork->lock_fork);
-	else 
+	else
 		pthread_mutex_lock(philo->attr_left_fork->lock_fork);
-	
+	philo->have_forks = 1;
 	pthread_mutex_lock(philo->action->lock_action);
-	pthread_mutex_lock(philo->lock_print_action);
-	philo->attr_left_fork->lock_bool= 1;
-	philo->attr_right_fork->lock_bool= 1;
-	pthread_mutex_unlock(philo->lock_print_action);
-	return 1;
 	
+	return (1);
 }
 
 void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 {
+	int	a;
+
 	// long int	time_max_sleep;
 	// long int	time_max_to_die;
-	int			a;
-
 	a = 0;
 	// time_max_to_die = philo->rest_time_to_die;
 	// time_max_sleep = philo->time_to_sleep;
@@ -155,14 +151,13 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 		pthread_mutex_lock(philo->action->lock_action);
 		if (philo->action->action == STOP)
 		{
-			if (philo->attr_left_fork->lock_bool == 1)
+			if (philo->have_forks == 1)
+			{
 				pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
-			philo->attr_left_fork->lock_bool = 0;
-			if (philo->attr_right_fork->lock_bool == 1)
 				pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
-			philo->attr_right_fork->lock_bool = 0;
+			}
 			pthread_mutex_unlock(philo->action->lock_action);
-			return NULL;
+			return (NULL);
 		}
 		if (a == 0)
 			philo->action->action = THINK;
@@ -170,30 +165,32 @@ void	*while_action_philo(long int time_mili_start, t_pnj *philo)
 		{
 			if (philo->number_of_philos > 1)
 				eat_philo(philo);
-			else 
+			else
 			{
 				printf("philo can't eat with 1 fork\n");
 				a++;
-			}	
-			philo->action->action = EAT;
-			
+			}
+			if (philo->action->action != STOP)
+				philo->action->action = EAT;
 		}
 		if (a == 2)
 		{
 			philo->action->action = SLEEP;
 			a = -1;
 		}
-		if (ft_message(philo, time_mili_start) > 0)
+		pthread_mutex_unlock(philo->action->lock_action);
+		if (philo->action->action != STOP && ft_message(philo,
+				time_mili_start) > 0)
 		{
-			pthread_mutex_unlock(philo->action->lock_action);
-			return NULL;
+			return (NULL);
 		}
+		pthread_mutex_lock(philo->action->lock_action);
 		if (philo->action->action == SLEEP)
 		{
 			pthread_mutex_unlock(philo->action->lock_action);
 			usleep(philo->time_to_sleep * 1000);
 		}
-		else	
+		else
 			pthread_mutex_unlock(philo->action->lock_action);
 		a++;
 	}
@@ -301,7 +298,6 @@ t_fork	*init_fork(int number_philo)
 			return (NULL);
 		}
 		forks[i].lock_fork = &lock_mutex[i];
-		forks[i].lock_bool = 0;
 		forks[i].fork = i;
 		forks[i].table_mutex = lock_mutex;
 		i++;
@@ -340,13 +336,14 @@ void	attr_forks_philo(t_pnj *philosophers, t_fork *forks,
 	}
 }
 
-t_action_mutex  *init_action_mutex(long int nb_philo)
+t_action_mutex	*init_action_mutex(long int nb_philo)
 {
-	t_action_mutex *malloc_action;
-	pthread_mutex_t *malloc_action_mutex;
+	t_action_mutex	*malloc_action;
+	pthread_mutex_t	*malloc_action_mutex;
+	int				i;
+
 	malloc_action = malloc(sizeof(t_action_mutex) * nb_philo);
 	malloc_action_mutex = malloc(sizeof(pthread_mutex_t) * nb_philo);
-	
 	if (malloc_action == NULL || malloc_action_mutex == NULL)
 	{
 		if (malloc_action != NULL)
@@ -355,16 +352,15 @@ t_action_mutex  *init_action_mutex(long int nb_philo)
 			free(malloc_action_mutex);
 		return (NULL);
 	}
-	int i;
 	i = 0;
 	while (i < nb_philo)
 	{
-		pthread_mutex_init(&malloc_action_mutex[i],NULL);
+		pthread_mutex_init(&malloc_action_mutex[i], NULL);
 		malloc_action[i].lock_action = &malloc_action_mutex[i];
 		malloc_action[i].action = INIT;
 		i++;
 	}
-	return malloc_action;
+	return (malloc_action);
 }
 
 int	main(int argc, char **argv)
@@ -395,7 +391,7 @@ int	main(int argc, char **argv)
 				+ 1));
 	list.forks = init_fork(list.number_of_philosophers);
 	list.action_mutex = init_action_mutex(list.number_of_philosophers);
-	
+
 	if (list.philosophers == NULL || list.forks == NULL)
 	{
 		if (list.philosophers != NULL)
@@ -405,7 +401,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	pthread_mutex_init(&mutex_print, NULL);
-	
+
 	while (i < list.number_of_philosophers)
 	{
 		list.philosophers[i].philo_number = i + 1;
@@ -415,10 +411,11 @@ int	main(int argc, char **argv)
 		list.philosophers[i].rest_number_eat = list.number_of_times_each_philosopher_must_eat;
 		list.philosophers[i].lock_print_action = &mutex_print;
 		list.philosophers[i].action = &list.action_mutex[i];
+		list.philosophers[i].have_forks = 0;
 		i++;
 	}
 	list.philosophers[i].philo_number = -1;
-	
+
 	attr_forks_philo(list.philosophers, list.forks,
 		list.number_of_philosophers);
 	// printf_philo(list.philosophers);
@@ -448,37 +445,32 @@ int	main(int argc, char **argv)
 	while (count_nb_finish != list.number_of_philosophers)
 	{
 		if (i < 0)
-			break;
-			
+			break ;
+
 		i = 0;
 		while (i < list.number_of_philosophers)
 		{
 			pthread_mutex_lock(&mutex_print);
 			if (list.philosophers[i].rest_number_eat == 0)
 				count_nb_finish++;
-			if (list.philosophers[i].rest_number_eat > 0 && (time_now() - list.philosophers[i].last_time_to_eat) > list.time_to_die)
+			if (list.philosophers[i].rest_number_eat > 0 && (time_now()
+					- list.philosophers[i].last_time_to_eat) > list.time_to_die)
 			{
-				printf("%lu %d died\n",calc_time(time_start.tv_sec * 1000
-		+ (time_start.tv_usec / 1000)),list.philosophers[i].philo_number);
+				printf("%lu %d died\n", calc_time(time_start.tv_sec * 1000
+						+ (time_start.tv_usec / 1000)),
+					list.philosophers[i].philo_number);
 				i = 0;
 				while (i < list.number_of_philosophers)
 				{
-					if (list.philosophers[i].action->action == EAT)
-					{
-						if (list.philosophers[i].attr_left_fork->lock_bool == 1)
-							pthread_mutex_unlock(list.philosophers[i].attr_left_fork->lock_fork);
-						list.philosophers[i].attr_left_fork->lock_bool = 0;
-						if (list.philosophers[i].attr_right_fork->lock_bool == 1)
-							pthread_mutex_unlock(list.philosophers[i].attr_right_fork->lock_fork);
-						list.philosophers[i].attr_right_fork->lock_bool = 0;
-					}
+					pthread_mutex_lock(list.philosophers[i].action->lock_action);
 					list.philosophers[i].action->action = STOP;
+					pthread_mutex_unlock(list.philosophers[i].action->lock_action);
 					i++;
 				}
 				i = -1000;
 				pthread_mutex_unlock(&mutex_print);
-				break;
-			} 
+				break ;
+			}
 			i++;
 			pthread_mutex_unlock(&mutex_print);
 		}
@@ -493,7 +485,7 @@ int	main(int argc, char **argv)
 	}
 	free_philo(list.philosophers);
 	free(list.action_mutex->lock_action);
-	
+
 	free(list.action_mutex);
 	mutex_destroy_tab_forks_and_free(list.forks);
 	pthread_mutex_destroy(&mutex_print);
