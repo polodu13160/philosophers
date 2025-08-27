@@ -12,7 +12,7 @@ typedef enum e_action
 	SLEEP,
 	THINK,
 	STOP,
-	DEAD
+	HUNGER_STRIKE
 }					t_action;
 
 typedef struct t_action_mutex
@@ -45,7 +45,7 @@ typedef struct s_pnj
 	long int		number_of_philos;
 	int				have_forks;
 	t_action_mutex	*action;
-	struct timeval	time_start;
+	long int		*time_start;
 }					t_pnj;
 
 typedef struct s_philo
