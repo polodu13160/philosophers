@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:23:20 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:49:49 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 11:09:33 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	monitoring(t_philo_info *list, long int time_start)
 static bool	error_time_listed_monitoring(t_philo_info *list, long int i,
 		long int var_time_now)
 {
-	printf("dddd\n");
 	if (var_time_now == -1)
 		print_error_time("Error Time");
 	i = 0;
@@ -96,8 +95,7 @@ static bool	philo_check_dead(t_philo_info *list, long int i,
 			return (error_time_listed_monitoring(list, i, v_time_now));
 		if (list->philosophers[i].finish != 1
 			&& list->philosophers[i].last_time_to_eat != -2 && (time_now()
-				- list->philosophers[i].last_time_to_eat) >= list->time_to_die
-			+ 5)
+				- list->philosophers[i].last_time_to_eat) >= list->time_to_die + 5)
 		{
 			philo_is_dead(list, i, time_start);
 			pthread_mutex_unlock(&list->lock_print_action);

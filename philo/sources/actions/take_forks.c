@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:48:24 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:46:14 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 11:06:51 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static void	take_fork_right(t_philo_attributes *philo,
 
 int	take_forks(t_philo_attributes *philo, int long time_start)
 {
+	pthread_mutex_unlock(philo->action->lock_action);
 	if (philo->number_of_philos == 1)
 		return (take_forks_one_philo(philo, time_start));
-	pthread_mutex_unlock(philo->action->lock_action);
 	if (philo->id % 2 == 0)
 		take_fork_left(philo, time_start);
 	else
