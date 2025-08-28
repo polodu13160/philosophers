@@ -6,15 +6,15 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:48:24 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 04:50:04 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 06:25:00 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-static int	take_fork_left(t_philosopher_attributes *philo, int long time_start);
+static void	take_fork_left(t_philosopher_attributes *philo, int long time_start);
 static int	take_forks_one_philo(t_philosopher_attributes *philo, int long time_start);
-static int	take_fork_right(t_philosopher_attributes *philo, int long time_start);
+static void	take_fork_right(t_philosopher_attributes *philo, int long time_start);
 
 
 
@@ -36,7 +36,7 @@ int	take_forks(t_philosopher_attributes *philo, int long time_start)
 	return (0);
 }
 
-static int	take_fork_left(t_philosopher_attributes *philo, int long time_start)
+static void	take_fork_left(t_philosopher_attributes *philo, int long time_start)
 {
 	pthread_mutex_lock(philo->attr_left_fork->lock_fork);
 	philo->attr_left_fork->available = 1;
@@ -63,7 +63,7 @@ static int	take_forks_one_philo(t_philosopher_attributes *philo, int long time_s
 	}
 }
 
-static int	take_fork_right(t_philosopher_attributes *philo, int long time_start)
+static void	take_fork_right(t_philosopher_attributes *philo, int long time_start)
 {
 	pthread_mutex_lock(philo->attr_right_fork->lock_fork);
 	philo->attr_right_fork->available = 1;

@@ -6,13 +6,37 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 05:55:28 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 06:30:34 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-t_fork	*init_fork(int number_philo)
+static t_fork	*init_fork(int number_philo);
+static t_action_mutex	*init_action_mutex(long int nb_philo);
+
+
+int	init_list_info(char **argv, int argc,t_philosopher_info *list)
+{
+	pthread_mutex_t		mutex_print;
+
+	start_init_list_info(list);
+	if (check_parsing(argv, list, argc) == 1)
+		return (1);
+	list->philosophers = malloc(sizeof(t_philosopher_attributes)
+			* (list->number_of_philosophers + 1));
+	list->forks = init_fork(list->number_of_philosophers);
+	list->action_mutex = init_action_mutex(list->number_of_philosophers);
+	if (list->philosophers == NULL || list->forks == NULL
+		|| list->action_mutex == NULL)
+		return (destroy_and_free_malloc(list));
+	if (pthread_mutex_init(&mutex_print, NULL) == -1)
+		return (destroy_and_free_malloc(list));
+	list->lock_print_action = mutex_print;
+	return (0);
+}
+
+static t_fork	*init_fork(int number_philo)
 {
 	int				i;
 	t_fork			*forks;
@@ -71,7 +95,7 @@ void	attr_forks_philo(t_philosopher_attributes *philosophers, t_fork *forks,
 	}
 }
 
-t_action_mutex	*init_action_mutex(long int nb_philo)
+static t_action_mutex	*init_action_mutex(long int nb_philo)
 {
 	t_action_mutex	*malloc_action;
 	pthread_mutex_t	*malloc_action_mutex;

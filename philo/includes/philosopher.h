@@ -52,6 +52,7 @@ typedef struct s_philosopher_attributes
 typedef struct s_philosopher_info
 {
 	long int					number_of_philosophers;
+	pthread_mutex_t				lock_print_action;
 	long int					time_to_die;
 	long int					time_to_eat;
 	long int					time_to_sleep;
@@ -83,10 +84,9 @@ void							*while_action_philo(long int time_mili_start,
 int								parsing_argv(char **argv,
 									t_philosopher_info *list, int argc);
 // init.c
-t_fork							*init_fork(int number_philo);
+int	init_list_info(char **argv, int argc,t_philosopher_info *list);
 void							attr_forks_philo(t_philosopher_attributes *philosophers,
 									t_fork *forks, int number_of_philosophers);
-t_action_mutex					*init_action_mutex(long int nb_philo);
 // free_and_destroy_mutex.c
 void							free_philo(t_philosopher_attributes *philo);
 void	*free_destoy_tab_forks(t_fork *forks, pthread_mutex_t	*lock_mutex, int i);
