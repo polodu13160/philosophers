@@ -4,7 +4,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typedef enum e_action
+typedef enum e_action_type
 {
 	INIT,
 	FORK,
@@ -13,12 +13,12 @@ typedef enum e_action
 	THINK,
 	STOP,
 	HUNGER_STRIKE
-}					t_action;
+}					t_action_type;
 
 typedef struct t_action_mutex
 {
 	pthread_mutex_t *lock_action;
-	int 			action;
+	t_action_type 	action;
 }				t_action_mutex;
 
 typedef struct t_fork
@@ -33,12 +33,11 @@ typedef struct s_pnj
 {
 	pthread_t		value_thread;
 	int				finish;
-	long int		rest_time_to_die;
 	long int		last_time_to_eat;
 	long int		time_to_eat;
 	long int		time_to_sleep;
 	long int		rest_number_eat;
-	int				philo_number;
+	int				id;
 	pthread_mutex_t	*lock_print_action;
 	t_fork			*attr_left_fork;
 	t_fork			*attr_right_fork;
