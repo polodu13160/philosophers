@@ -6,24 +6,40 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:24:49 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 05:51:12 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 10:46:14 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+#include "stdio.h"
+#include "stdlib.h"
 
-void	free_philo(t_philosopher_attributes *philo)
+int	destroy_and_free_malloc(t_philo_info *list)
+{
+	if (list->forks != NULL)
+		free_destoy_tab_forks(list->forks, NULL, -1);
+	if (list->action_mutex != NULL)
+		free_destroy_tab_action(list->action_mutex, NULL, -1,
+			list->number_of_philosophers);
+	if (list->philosophers != NULL)
+		free(list->philosophers);
+	return (1);
+}
+
+void	free_philo(t_philo_attributes *philo)
 {
 	free(philo);
 }
 
-void *free_destroy_tab_action(t_action_mutex *action, pthread_mutex_t	*malloc_action_mutex,int index_mutex_crash, int nb_philo)
+void	*free_destroy_tab_action(t_action_mutex *action,
+		pthread_mutex_t *malloc_action_mutex, int index_mutex_crash,
+		int nb_philo)
 {
-	int i;
+	int	i;
 
 	i = 0;
-    if (index_mutex_crash >= 0)
-    {
+	if (index_mutex_crash >= 0)
+	{
 		while (nb_philo > i)
 		{
 			if (index_mutex_crash > i)
@@ -32,17 +48,18 @@ void *free_destroy_tab_action(t_action_mutex *action, pthread_mutex_t	*malloc_ac
 				free(malloc_action_mutex);
 			i++;
 		}
-    }
-    else if (malloc_action_mutex != NULL)
-        free(malloc_action_mutex);
-    if (action != NULL)
-			free(action);
-    return NULL;
+	}
+	else if (malloc_action_mutex != NULL)
+		free(malloc_action_mutex);
+	if (action != NULL)
+		free(action);
+	return (NULL);
 }
 
-void	*free_destoy_tab_forks(t_fork *forks, pthread_mutex_t	*lock_mutex, int index_mutex_crash)
+void	*free_destoy_tab_forks(t_fork *forks, pthread_mutex_t *lock_mutex,
+		int index_mutex_crash)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (index_mutex_crash >= 0)
@@ -60,5 +77,5 @@ void	*free_destoy_tab_forks(t_fork *forks, pthread_mutex_t	*lock_mutex, int inde
 		free(lock_mutex);
 	if (forks != NULL)
 		free(forks);
-	return NULL;
+	return (NULL);
 }

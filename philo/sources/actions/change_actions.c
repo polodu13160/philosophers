@@ -6,25 +6,25 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:16:01 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 05:04:27 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 10:46:14 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-static void	*exit_thread(t_philosopher_attributes *philo);
-static void	think(t_philosopher_attributes *philo, long int time_mili_start);
-static void	sleep(t_philosopher_attributes *philo, long int time_mili_start,
+static void	*exit_thread(t_philo_attributes *philo);
+static void	think(t_philo_attributes *philo, long int time_mili_start);
+static void	sleep(t_philo_attributes *philo, long int time_mili_start,
 				int *a);
 
 void	*while_action_philo(long int time_mili_start,
-		t_philosopher_attributes *philo)
+		t_philo_attributes *philo)
 {
 	int	a;
 
 	a = 0;
 	if (philo->id % 2 == 0)
-		usleep_cut(philo, philo->time_to_eat);
+		usleep_cut(philo, 200);
 	while (1)
 	{
 		pthread_mutex_lock(philo->action->lock_action);
@@ -37,7 +37,7 @@ void	*while_action_philo(long int time_mili_start,
 			take_forks(philo, time_mili_start);
 			if (philo->action->action_type != STOP)
 				philo->action->action_type = EAT;
-			ft_new_message(philo, time_mili_start);
+			lock_mutex_and_print_message(philo, time_mili_start);
 		}
 		if (a == 2)
 			sleep(philo, time_mili_start, &a);
@@ -46,7 +46,7 @@ void	*while_action_philo(long int time_mili_start,
 	}
 }
 
-static void	*exit_thread(t_philosopher_attributes *philo)
+static void	*exit_thread(t_philo_attributes *philo)
 {
 	if (philo->have_forks == 1)
 	{
@@ -60,22 +60,33 @@ static void	*exit_thread(t_philosopher_attributes *philo)
 	return (NULL);
 }
 
-static void	think(t_philosopher_attributes *philo, long int time_mili_start)
+static void	think(t_philo_attributes *philo, long int time_mili_start)
 {
 	if (philo->action->action_type != STOP)
 		philo->action->action_type = THINK;
-	ft_new_message(philo, time_mili_start);
+	lock_mutex_and_print_message(philo, time_mili_start);
 	pthread_mutex_unlock(philo->action->lock_action);
 	if (philo->number_of_philos % 2 != 0)
 		usleep_cut(philo, philo->time_to_eat);
 	pthread_mutex_lock(philo->action->lock_action);
 }
 
-static void	sleep(t_philosopher_attributes *philo, long int time_mili_start,
+static void	sleep(t_philo_attributes *philo, long int time_mili_start,
 		int *a)
 {
 	if (philo->action->action_type != STOP)
 		philo->action->action_type = SLEEP;
-	ft_new_message(philo, time_mili_start);
+	lock_mutex_and_print_message(philo, time_mili_start);
 	*a = -1;
+}
+
+int	check_dead_or_stop(t_philo_attributes *philo)
+{
+	int	return_value;
+
+	return_value = 0;
+	if (philo->action->action_type == STOP
+		|| philo->action->action_type == HUNGER_STRIKE)
+		return_value = 1;
+	return (return_value);
 }

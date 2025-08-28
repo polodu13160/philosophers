@@ -6,24 +6,25 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 06:30:34 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 10:46:14 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+#include "stdlib.h"
 
-static t_fork	*init_fork(int number_philo);
+static t_fork			*init_fork(int number_philo);
 static t_action_mutex	*init_action_mutex(long int nb_philo);
+static void				start_init_list_info(t_philo_info *list);
 
-
-int	init_list_info(char **argv, int argc,t_philosopher_info *list)
+int	init_list_info(char **argv, int argc, t_philo_info *list)
 {
-	pthread_mutex_t		mutex_print;
+	pthread_mutex_t	mutex_print;
 
 	start_init_list_info(list);
 	if (check_parsing(argv, list, argc) == 1)
 		return (1);
-	list->philosophers = malloc(sizeof(t_philosopher_attributes)
+	list->philosophers = malloc(sizeof(t_philo_attributes)
 			* (list->number_of_philosophers + 1));
 	list->forks = init_fork(list->number_of_philosophers);
 	list->action_mutex = init_action_mutex(list->number_of_philosophers);
@@ -34,6 +35,33 @@ int	init_list_info(char **argv, int argc,t_philosopher_info *list)
 		return (destroy_and_free_malloc(list));
 	list->lock_print_action = mutex_print;
 	return (0);
+}
+
+void	init_philos_attributes(t_philo_info *list, long int *time_start)
+{
+	int	i;
+
+	i = 0;
+	while (i < list->number_of_philosophers)
+	{
+		list->philosophers[i].id = i + 1;
+		list->philosophers[i].number_of_philos = list->number_of_philosophers;
+		list->philosophers[i].time_to_sleep = list->time_to_sleep;
+		list->philosophers[i].time_to_eat = list->time_to_eat;
+		list->philosophers[i].rest_number_eat = \
+		list->number_of_times_each_philosopher_must_eat;
+		list->philosophers[i].lock_print_action = &list->lock_print_action;
+		list->philosophers[i].action = &list->action_mutex[i];
+		list->philosophers[i].have_forks = 0;
+		list->philosophers[i].finish = 0;
+		list->philosophers[i].time_start = time_start;
+		list->philosophers[i].error_time = 0;
+		list->philosophers[i].last_time_to_eat = -2;
+		i++;
+	}
+	list->philosophers[i].id = -1;
+	attr_forks_philo(list->philosophers, list->forks,
+		list->number_of_philosophers);
 }
 
 static t_fork	*init_fork(int number_philo)
@@ -65,34 +93,14 @@ static t_fork	*init_fork(int number_philo)
 	return (forks);
 }
 
-void	attr_forks_philo(t_philosopher_attributes *philosophers, t_fork *forks,
-		int number_of_philosophers)
+static void	start_init_list_info(t_philo_info *list)
 {
-	int	i;
-
-	i = 0;
-	while (forks[i].fork != -1)
-	{
-		philosophers[i].attr_left_fork = &forks[i];
-		if (i == 0)
-		{
-			if (i != number_of_philosophers - 1)
-				philosophers[i].attr_right_fork = &forks[number_of_philosophers
-					- 1];
-			else
-			{
-				philosophers[i].attr_right_fork = NULL;
-				return ;
-			}
-		}
-		else
-		{
-			if (i != number_of_philosophers)
-				philosophers[i].attr_right_fork = philosophers[i
-					- 1].attr_left_fork;
-		}
-		i++;
-	}
+	list->number_of_philosophers = 0;
+	list->philosophers = NULL;
+	list->number_of_times_each_philosopher_must_eat = -1;
+	list->time_to_die = 0;
+	list->time_to_eat = 0;
+	list->time_to_sleep = 0;
 }
 
 static t_action_mutex	*init_action_mutex(long int nb_philo)

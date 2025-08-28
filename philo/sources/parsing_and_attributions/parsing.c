@@ -6,13 +6,32 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:18:19 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 04:19:14 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 10:56:26 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+#include "stdio.h"
 
-int	parsing_argv(char **argv, t_philosopher_info *list, int argc)
+static int	parsing_argv(char **argv, t_philo_info *list, int argc);
+
+int	check_parsing(char **argv, t_philo_info *list, int argc)
+{
+	if (parsing_argv(++argv, list, argc - 1) > 0)
+	{
+		printf(\
+"error parsing for overflow or negatif value or too much parameters\n");
+		return (1);
+	}
+	if (list->number_of_philosophers == 0)
+	{
+		printf("are you serious ?\n");
+		return (1);
+	}
+	return (0);
+}
+
+static int	parsing_argv(char **argv, t_philo_info *list, int argc)
 {
 	int			i;
 	long int	value;
