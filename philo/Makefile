@@ -1,10 +1,18 @@
 .phony =all re clean fclean
 
 FLAGS = -Wall -Wextra -g3 -MMD -MP -Iincludes/
-FLAGS_DEBUG = -DDEBUG=1
+FLAGS_DEBUG = -DDEBUG=1 -fsanitize=thread
 NAME = philo
 FILES = main \
-		debug
+		debug \
+		times \
+		print \
+		parsing \
+		init \
+		free_and_destroy_mutex \
+		actions/take_forks \
+		actions/change_actions \
+
 
 OBJ_DIR = objects/
 SRC_DIR = sources/
@@ -18,7 +26,7 @@ debug: FLAGS += $(FLAGS_DEBUG)
 debug: fclean all
 
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)/actions
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c 
 	$(CC) $(FLAGS) -c $< -o $@
