@@ -6,21 +6,19 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:48:24 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 11:06:51 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 03:09:38 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 #include <unistd.h>
 
-static void	take_fork_left(t_philo_attributes *philo,
-				int long time_start);
+static void	take_fork_left(t_philo_attributes *philo, int long time_start);
 
 static int	take_forks_one_philo(t_philo_attributes *philo,
 				int long time_start);
 
-static void	take_fork_right(t_philo_attributes *philo,
-				int long time_start);
+static void	take_fork_right(t_philo_attributes *philo, int long time_start);
 
 int	take_forks(t_philo_attributes *philo, int long time_start)
 {
@@ -51,10 +49,10 @@ static void	take_fork_left(t_philo_attributes *philo, int long time_start)
 	pthread_mutex_unlock(philo->action->lock_action);
 }
 
-static int	take_forks_one_philo(t_philo_attributes *philo,
-		int long time_start)
+static int	take_forks_one_philo(t_philo_attributes *philo, int long time_start)
 {
 	take_fork_left(philo, time_start);
+	pthread_mutex_lock(philo->action->lock_action);
 	if (check_dead_or_stop(philo) == 0)
 		philo->action->action_type = HUNGER_STRIKE;
 	while (1)
@@ -62,14 +60,19 @@ static int	take_forks_one_philo(t_philo_attributes *philo,
 		pthread_mutex_unlock(philo->action->lock_action);
 		usleep(500);
 		pthread_mutex_lock(philo->action->lock_action);
-		if (check_dead_or_stop(philo) == 1
-			&& philo->action->action_type != HUNGER_STRIKE)
+		if ((check_dead_or_stop(philo) == 1
+				&& philo->action->action_type != HUNGER_STRIKE)
+			|| philo->rest_number_eat == 0)
+		{
+			philo->action->action_type = STOP;
+			philo->attr_left_fork->available = 0;
+			pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
 			return (1);
+		}
 	}
 }
 
-static void	take_fork_right(t_philo_attributes *philo,
-		int long time_start)
+static void	take_fork_right(t_philo_attributes *philo, int long time_start)
 {
 	pthread_mutex_lock(philo->attr_right_fork->lock_fork);
 	philo->attr_right_fork->available = 1;

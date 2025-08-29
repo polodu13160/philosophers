@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:58:38 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:56:56 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/28 22:18:58 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	usleep_cut(t_philo_attributes *philo, long int time_limit)
 		return (usleep_message_error(philo));
 	while (1)
 	{
-		usleep(100);
+		usleep(500);
 		pthread_mutex_lock(philo->action->lock_action);
 		if (philo->action->action_type == STOP)
 		{
@@ -47,7 +47,7 @@ int	usleep_cut(t_philo_attributes *philo, long int time_limit)
 		now = time_now();
 		if (now == -1)
 			return (usleep_message_error(philo));
-		if ((time_now_first_function + time_limit) < now)
+		if ((time_now_first_function + time_limit) <= now)
 			return (0);
 	}
 }
