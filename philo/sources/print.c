@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:11:53 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:44:54 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:54:16 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,6 @@ static int	print_message(t_philo_attributes *philo, long int time_mili_start)
 
 	usleep_return_value = 0;
 	time_now_in_mili_at_start = calc_time(time_mili_start);
-	if (time_now_in_mili_at_start <= -1)
-	{
-		print_error_time("Error Time in thread", philo);
-		return (2);
-	}
 	if (philo->action->action_type == SLEEP)
 		return (print_message_sleep_and_finish_action(philo,
 				time_now_in_mili_at_start));
@@ -90,11 +85,7 @@ static int	print_message_eat_and_finish_action(t_philo_attributes *philo,
 	pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
 	pthread_mutex_lock(philo->lock_print_action);
 	if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
-	{
-		if (philo->last_time_to_eat == -1)
-			print_error_time("Error Time in thread", philo);
 		return (1);
-	}
 	return (0);
 }
 

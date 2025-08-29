@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:58:38 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:06:49 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:55:12 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,12 @@
 #include <limits.h>
 #include <unistd.h>
 
-static int	usleep_message_error(t_philo_attributes *philo)
-{
-	pthread_mutex_lock(philo->action->lock_action);
-	philo->action->action_type = STOP;
-	pthread_mutex_unlock(philo->action->lock_action);
-	pthread_mutex_lock(philo->lock_print_action);
-	print_error_time("Time Error", philo);
-	pthread_mutex_unlock(philo->lock_print_action);
-	return (2);
-}
-
 int	usleep_cut(t_philo_attributes *philo, long int time_limit)
 {
 	long int	now;
 	long int	time_now_first_function;
 
 	time_now_first_function = time_now();
-	if (time_now_first_function == -1)
-		return (usleep_message_error(philo));
 	while (1)
 	{
 		usleep(500);
@@ -44,8 +31,6 @@ int	usleep_cut(t_philo_attributes *philo, long int time_limit)
 		}
 		pthread_mutex_unlock(philo->action->lock_action);
 		now = time_now();
-		if (now == -1)
-			return (usleep_message_error(philo));
 		if ((time_now_first_function + time_limit) <= now)
 			return (0);
 	}

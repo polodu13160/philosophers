@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:23:20 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:06:37 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:53:50 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,23 +46,6 @@ void	monitoring(t_philo_info *list, long int time_start)
 	}
 }
 
-static bool	error_time_listed_monitoring(t_philo_info *list, long int i,
-		long int var_time_now)
-{
-	if (var_time_now == -1)
-		print_error_time("Error Time", NULL);
-	i = 0;
-	while (i < list->number_of_philosophers)
-	{
-		pthread_mutex_lock(list->philosophers[i].action->lock_action);
-		list->philosophers[i].action->action_type = STOP;
-		list->philosophers[i].error_time = 1;
-		pthread_mutex_unlock(list->philosophers[i].action->lock_action);
-		i++;
-	}
-	return (1);
-}
-
 static void	philo_is_dead(t_philo_info *list, long int i, long int time_start)
 {
 	printf("%lu %ld died\n", calc_time(time_start), list->philosophers[i].id);
@@ -82,8 +65,6 @@ static bool	philo_check_dead(t_philo_info *list, long int i,
 	long int	v_time_now;
 
 	v_time_now = time_now();
-	if (v_time_now == -1 || list->philosophers[i].error_time == 1)
-		return (error_time_listed_monitoring(list, i, v_time_now));
 	if (list->philosophers[i].finish != 1 && (time_now()
 			- list->philosophers[i].last_time_to_eat) >= list->time_to_die)
 	{
@@ -91,8 +72,6 @@ static bool	philo_check_dead(t_philo_info *list, long int i,
 		usleep(500);
 		pthread_mutex_lock(&list->lock_print_action);
 		v_time_now = time_now();
-		if (v_time_now == -1)
-			return (error_time_listed_monitoring(list, i, v_time_now));
 		if (list->philosophers[i].finish != 1
 			&& list->philosophers[i].last_time_to_eat != -2 && (time_now()
 				- list->philosophers[i].last_time_to_eat) >= list->time_to_die)

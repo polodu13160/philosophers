@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:24:49 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 03:35:26 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:47:30 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,6 @@ int	destroy_and_free_malloc(t_philo_info *list)
 	if (list->philosophers != NULL)
 		free(list->philosophers);
 	return (1);
-}
-
-void	free_philo(t_philo_attributes *philo)
-{
-	free(philo);
 }
 
 void	*free_destroy_tab_action(t_action_mutex *action,

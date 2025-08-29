@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:54:17 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 13:50:17 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,13 @@ int	init_list_info(char **argv, int argc, t_philo_info *list)
 		return (1);
 	list->philosophers = malloc(sizeof(t_philo_attributes)
 			* (list->number_of_philosophers + 1));
+	if (list->philosophers == NULL)
+		return (1);
 	list->forks = init_fork(list->number_of_philosophers);
+	if (list->forks == NULL)
+		return (destroy_and_free_malloc(list));
 	list->action_mutex = init_action_mutex(list->number_of_philosophers);
-	if (list->philosophers == NULL || list->forks == NULL
-		|| list->action_mutex == NULL)
+	if (list->action_mutex == NULL)
 		return (destroy_and_free_malloc(list));
 	if (pthread_mutex_init(&mutex_print, NULL) == -1)
 		return (destroy_and_free_malloc(list));
@@ -48,8 +51,7 @@ void	init_philos_attributes(t_philo_info *list, long int *time_start)
 		list->philosophers[i].number_of_philos = list->number_of_philosophers;
 		list->philosophers[i].time_to_sleep = list->time_to_sleep;
 		list->philosophers[i].time_to_eat = list->time_to_eat;
-		list->philosophers[i].rest_number_eat = \
-list->number_of_times_each_philosopher_must_eat;
+		list->philosophers[i].rest_number_eat = list->number_of_times_each_philosopher_must_eat;
 		list->philosophers[i].lock_print_action = &list->lock_print_action;
 		list->philosophers[i].action = &list->action_mutex[i];
 		list->philosophers[i].finish = 0;
@@ -69,6 +71,7 @@ static t_fork	*init_fork(int number_philo)
 	t_fork			*forks;
 	pthread_mutex_t	*lock_mutex;
 
+	lock_mutex = NULL;
 	forks = malloc(sizeof(t_fork) * (number_philo + 1));
 	lock_mutex = malloc(sizeof(pthread_mutex_t) * (number_philo));
 	if (forks == NULL || lock_mutex == NULL)
@@ -93,6 +96,8 @@ static void	start_init_list_info(t_philo_info *list)
 {
 	list->number_of_philosophers = 0;
 	list->philosophers = NULL;
+	list->action_mutex = NULL;
+	list->forks = NULL;
 	list->number_of_times_each_philosopher_must_eat = -1;
 	list->time_to_die = 0;
 	list->time_to_eat = 0;
