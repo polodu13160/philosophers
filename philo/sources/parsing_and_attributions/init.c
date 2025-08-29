@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:46:14 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 03:28:38 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,17 +73,14 @@ static t_fork	*init_fork(int number_philo)
 	forks = malloc(sizeof(t_fork) * (number_philo + 1));
 	lock_mutex = malloc(sizeof(pthread_mutex_t) * (number_philo));
 	if (forks == NULL || lock_mutex == NULL)
-		free_destoy_tab_forks(forks, lock_mutex, -1);
+		return (free_destoy_tab_forks(forks, lock_mutex, -1));
 	i = 0;
 	while (i < number_philo)
 	{
 		forks[i].fork = -1;
 		forks[i].table_mutex = lock_mutex;
 		if (pthread_mutex_init(&lock_mutex[i], NULL) == -1)
-		{
-			free_destoy_tab_forks(forks, NULL, i);
-			return (NULL);
-		}
+			return (free_destoy_tab_forks(forks, NULL, i));
 		forks[i].lock_fork = &lock_mutex[i];
 		forks[i].fork = i;
 		forks[i].available = 0;
@@ -117,6 +114,7 @@ static t_action_mutex	*init_action_mutex(long int nb_philo)
 	i = 0;
 	while (i < nb_philo)
 	{
+		malloc_action[i].tab_lock_action = malloc_action_mutex;
 		if (pthread_mutex_init(&malloc_action_mutex[i], NULL) == -1)
 			return (free_destroy_tab_action(malloc_action, malloc_action_mutex,
 					i, nb_philo));

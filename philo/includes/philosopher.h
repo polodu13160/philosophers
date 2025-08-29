@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 10:39:56 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:46:18 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 03:25:30 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ typedef struct t_action_mutex
 {
 	pthread_mutex_t		*lock_action;
 	t_action_type		action_type;
+	pthread_mutex_t		*tab_lock_action;
 }						t_action_mutex;
 
 typedef struct t_fork
