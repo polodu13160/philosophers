@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:11:53 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:22:14 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:44:54 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	print_message(t_philo_attributes *philo, long int time_mili_start)
 	time_now_in_mili_at_start = calc_time(time_mili_start);
 	if (time_now_in_mili_at_start <= -1)
 	{
-		print_error_time("error Time in thread", philo);
+		print_error_time("Error Time in thread", philo);
 		return (2);
 	}
 	if (philo->action->action_type == SLEEP)
@@ -92,7 +92,7 @@ static int	print_message_eat_and_finish_action(t_philo_attributes *philo,
 	if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
 	{
 		if (philo->last_time_to_eat == -1)
-			print_error_time("error Time in thread", philo);
+			print_error_time("Error Time in thread", philo);
 		return (1);
 	}
 	return (0);
@@ -115,6 +115,11 @@ void	*print_error_time(char *message, t_philo_attributes *philo)
 {
 	perror(message);
 	if (philo != NULL)
+	{
 		philo->error_time = 1;
+		pthread_mutex_lock(philo->action->lock_action);
+		philo->action->action_type = STOP;
+		pthread_mutex_unlock(philo->action->lock_action);
+	}
 	return (NULL);
 }
