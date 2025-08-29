@@ -1,7 +1,6 @@
 .phony =all re clean fclean
 
 FLAGS = -Wall -Wextra -MMD -MP -Iincludes/
-FLAGS_DEBUG = -DDEBUG=1 -fsanitize=thread
 NAME = philo
 FILES = main \
 		times \
@@ -23,9 +22,6 @@ OBJS = $(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
 DEPS = $(addprefix $(OBJ_DIR), $(addsuffix .d, $(FILES)))
 
 all: $(NAME)
-
-debug: FLAGS += $(FLAGS_DEBUG)
-debug: fclean all
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)/actions
