@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:49:12 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 17:01:36 by pauldepetri      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	main(int argc, char **argv)
 	init_philos_attributes(&list, &time_start);
 	if (pthread_create_philosophers(&list, &time_start) == 1)
 		return (1);
-	usleep(1000);
+	usleep(500);
 	monitoring(&list, time_start);
 	i = 0;
 	while (list.philosophers[i].id != -1)

@@ -1,6 +1,6 @@
 .phony =all re clean fclean
 
-FLAGS = -Wall -Wextra --Werror  -MMD -MP -Iincludes/
+FLAGS = -Wall -Wextra -Werror  -MMD -MP -Iincludes/
 NAME = philo
 FILES = main \
 		times \

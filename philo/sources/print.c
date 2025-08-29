@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:11:53 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 13:54:16 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 16:57:49 by pauldepetri      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,7 @@ void	lock_mutex_and_print_message(t_philo_attributes *philo,
 static int	print_message(t_philo_attributes *philo, long int time_mili_start)
 {
 	long int	time_now_in_mili_at_start;
-	int			usleep_return_value;
 
-	usleep_return_value = 0;
 	time_now_in_mili_at_start = calc_time(time_mili_start);
 	if (philo->action->action_type == SLEEP)
 		return (print_message_sleep_and_finish_action(philo,

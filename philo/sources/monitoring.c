@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitoring.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:23:20 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 13:53:50 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 17:01:09 by pauldepetri      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,12 @@ static void	philo_is_dead(t_philo_info *list, long int i, long int time_start)
 static bool	philo_check_dead(t_philo_info *list, long int i,
 		long int time_start)
 {
-	long int	v_time_now;
-
-	v_time_now = time_now();
 	if (list->philosophers[i].finish != 1 && (time_now()
 			- list->philosophers[i].last_time_to_eat) >= list->time_to_die)
 	{
 		pthread_mutex_unlock(&list->lock_print_action);
-		usleep(500);
+		usleep(200);
 		pthread_mutex_lock(&list->lock_print_action);
-		v_time_now = time_now();
 		if (list->philosophers[i].finish != 1
 			&& list->philosophers[i].last_time_to_eat != -2 && (time_now()
 				- list->philosophers[i].last_time_to_eat) >= list->time_to_die)
