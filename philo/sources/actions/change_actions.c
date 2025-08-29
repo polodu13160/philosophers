@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:16:01 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 03:14:18 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:21:31 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,14 @@ void	*while_action_philo(long int time_mili_start, t_philo_attributes *philo)
 				philo->action->action_type = EAT;
 			lock_mutex_and_print_message(philo, time_mili_start);
 		}
-		if (a == 2)
+		if (a++ == 2)
 			sleep(philo, time_mili_start, &a);
 		pthread_mutex_unlock(philo->action->lock_action);
-		a++;
 	}
 }
 
 static void	*exit_thread(t_philo_attributes *philo)
 {
-	if (philo->have_forks == 1)
-	{
-		pthread_mutex_unlock(philo->attr_left_fork->lock_fork);
-		pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
-	}
 	pthread_mutex_unlock(philo->action->lock_action);
 	pthread_mutex_lock(philo->lock_print_action);
 	philo->finish = 1;
@@ -67,16 +61,13 @@ static void	think(t_philo_attributes *philo, long int time_mili_start,
 {
 	if (init == 1)
 		pthread_mutex_lock(philo->action->lock_action);
-	else
-	{
-		if (philo->action->action_type != STOP)
-			philo->action->action_type = THINK;
-		lock_mutex_and_print_message(philo, time_mili_start);
-		pthread_mutex_unlock(philo->action->lock_action);
-		if (philo->number_of_philos != 1 && philo->number_of_philos % 2 != 0)
-			usleep_cut(philo, philo->time_to_eat);
-		pthread_mutex_lock(philo->action->lock_action);
-	}
+	if (philo->action->action_type != STOP)
+		philo->action->action_type = THINK;
+	lock_mutex_and_print_message(philo, time_mili_start);
+	pthread_mutex_unlock(philo->action->lock_action);
+	if (philo->number_of_philos != 1 && philo->number_of_philos % 2 != 0)
+		usleep_cut(philo, philo->time_to_eat);
+	pthread_mutex_lock(philo->action->lock_action);
 	if (init == 1)
 		pthread_mutex_unlock(philo->action->lock_action);
 }

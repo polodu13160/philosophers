@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 10:39:56 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 03:25:30 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:23:33 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "stdbool.h"
 # include <pthread.h>
-# include <sys/time.h>
 
 typedef enum e_action_type
 {
@@ -38,8 +37,8 @@ typedef struct t_action_mutex
 typedef struct t_fork
 {
 	pthread_mutex_t		*lock_fork;
-	int					fork;
-	bool				available;
+	long int			fork;
+	long int			id_philo_take;
 	pthread_mutex_t		*table_mutex;
 }						t_fork;
 
@@ -56,7 +55,6 @@ typedef struct s_philosopher_attributes
 	t_fork				*attr_left_fork;
 	t_fork				*attr_right_fork;
 	long int			number_of_philos;
-	bool				have_forks;
 	t_action_mutex		*action;
 	long int			*time_start;
 	bool				error_time;
@@ -82,7 +80,8 @@ long int				calc_time(long time_mili_start);
 
 // print.c
 
-void					*print_error_time(char *message);
+void					*print_error_time(char *message,
+							t_philo_attributes *philo);
 void					lock_mutex_and_print_message(t_philo_attributes *philo,
 							long int time_start);
 

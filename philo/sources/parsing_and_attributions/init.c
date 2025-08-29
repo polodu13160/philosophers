@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 03:28:38 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:22:26 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	init_philos_attributes(t_philo_info *list, long int *time_start)
 		list->number_of_times_each_philosopher_must_eat;
 		list->philosophers[i].lock_print_action = &list->lock_print_action;
 		list->philosophers[i].action = &list->action_mutex[i];
-		list->philosophers[i].have_forks = 0;
 		list->philosophers[i].finish = 0;
 		list->philosophers[i].time_start = time_start;
 		list->philosophers[i].error_time = 0;
@@ -83,7 +82,7 @@ static t_fork	*init_fork(int number_philo)
 			return (free_destoy_tab_forks(forks, NULL, i));
 		forks[i].lock_fork = &lock_mutex[i];
 		forks[i].fork = i;
-		forks[i].available = 0;
+		forks[i].id_philo_take = -1;
 		i++;
 	}
 	forks[i].fork = -1;

@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:58:38 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 22:18:58 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:06:49 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@ static int	usleep_message_error(t_philo_attributes *philo)
 	philo->action->action_type = STOP;
 	pthread_mutex_unlock(philo->action->lock_action);
 	pthread_mutex_lock(philo->lock_print_action);
-	print_error_time("Time Error");
-	philo->error_time = 1;
+	print_error_time("Time Error", philo);
 	pthread_mutex_unlock(philo->lock_print_action);
 	return (2);
 }

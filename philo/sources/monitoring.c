@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:23:20 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 22:14:03 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:06:37 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static bool	error_time_listed_monitoring(t_philo_info *list, long int i,
 		long int var_time_now)
 {
 	if (var_time_now == -1)
-		print_error_time("Error Time");
+		print_error_time("Error Time", NULL);
 	i = 0;
 	while (i < list->number_of_philosophers)
 	{

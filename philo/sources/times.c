@@ -6,11 +6,12 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 18:22:08 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/28 10:48:30 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 08:23:48 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+#include <sys/time.h>
 
 long int	time_now(void)
 {

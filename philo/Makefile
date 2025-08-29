@@ -1,6 +1,6 @@
 .phony =all re clean fclean
 
-FLAGS = -Wall -Wextra -g3 -MMD -MP -Iincludes/
+FLAGS = -Wall -Wextra -MMD -MP -Iincludes/
 FLAGS_DEBUG = -DDEBUG=1 -fsanitize=thread
 NAME = philo
 FILES = main \
