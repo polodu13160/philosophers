@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:24:49 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 03:32:23 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/29 03:35:26 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ int	destroy_and_free_malloc(t_philo_info *list)
 	if (list->forks != NULL)
 		free_destoy_tab_forks(list->forks, NULL, list->number_of_philosophers);
 	if (list->action_mutex != NULL)
-		free_destroy_tab_action(list->action_mutex, list->philosophers[0].action->tab_lock_action, list->number_of_philosophers, list->number_of_philosophers);
+		free_destroy_tab_action(list->action_mutex,
+			list->philosophers[0].action->tab_lock_action,
+			list->number_of_philosophers, list->number_of_philosophers);
 	if (list->philosophers != NULL)
 		free(list->philosophers);
 	return (1);
