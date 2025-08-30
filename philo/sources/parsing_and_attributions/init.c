@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
+/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 17:03:42 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/30 19:44:01 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	init_list_info(char **argv, int argc, t_philo_info *list)
 	if (list->action_mutex == NULL)
 		return (destroy_and_free_malloc(list));
 	if (pthread_mutex_init(&mutex_print, NULL) == -1)
-		return (destroy_and_free_malloc(list));
+		return (destroy_and_free_malloc(list));	
 	list->lock_print_action = mutex_print;
 	return (0);
 }
@@ -59,6 +59,7 @@ list->number_of_times_each_philosopher_must_eat;
 		list->philosophers[i].time_start = time_start;
 		list->philosophers[i].error_time = 0;
 		list->philosophers[i].last_time_to_eat = -2;
+		list->philosophers[i].time_to_die = list->time_to_die;
 		i++;
 	}
 	list->philosophers[i].id = -1;

@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:16:01 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 14:41:16 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/30 20:06:05 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,6 @@ static void	think(t_philo_attributes *philo, long int time_mili_start,
 	if (philo->action->action_type != STOP)
 		philo->action->action_type = THINK;
 	lock_mutex_and_print_message(philo, time_mili_start);
-	pthread_mutex_unlock(philo->action->lock_action);
-	if (philo->number_of_philos != 1 && philo->number_of_philos % 2 != 0)
-		usleep_cut(philo, philo->time_to_eat);
-	pthread_mutex_lock(philo->action->lock_action);
 	if (init == 1)
 		pthread_mutex_unlock(philo->action->lock_action);
 }
