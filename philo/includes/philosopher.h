@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 10:39:56 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/31 14:22:48 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/31 20:18:42 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ typedef struct s_philosopher_attributes
 	t_fork				*attr_right_fork;
 	t_action_mutex		*action;
 	long int			*time_start;
-	bool				error_time;
 }						t_philo_attributes;
 
 typedef struct s_philosopher_info
@@ -80,14 +79,12 @@ long int				calc_time(long time_mili_start);
 
 // print.c
 
-void					*print_error_time(char *message,
-							t_philo_attributes *philo);
 void					lock_mutex_and_print_message(t_philo_attributes *philo,
 							long int time_start);
 
 // take_forks.c
 int						take_forks(t_philo_attributes *philo,
-							int long time_start);
+							long int time_start);
 // change_actions.c
 void					*while_action_philo(long int time_mili_start,
 							t_philo_attributes *philo);
@@ -99,16 +96,15 @@ int						check_parsing(char **argv, t_philo_info *list,
 int						init_list_info(char **argv, int argc,
 							t_philo_info *list);
 void					attr_forks_philo(t_philo_attributes *philosophers,
-							t_fork *forks, int number_of_philosophers);
+							t_fork *forks, long int number_of_philosophers);
 void					init_philos_attributes(t_philo_info *list,
 							long int *time_start);
 // free_and_destroy_mutex.c
-void					free_philo(t_philo_attributes *philo);
 void					*free_destoy_tab_forks(t_fork *forks,
-							pthread_mutex_t *lock_mutex, int i);
+							pthread_mutex_t *lock_mutex, long int i);
 void					*free_destroy_tab_action(t_action_mutex *action,
 							pthread_mutex_t *malloc_action_mutex,
-							int index_mutex_crash, int nb_philo);
+							long int index_mutex_crash, long int nb_philo);
 int						destroy_and_free_malloc(t_philo_info *list);
 // monitoring.c
 void					monitoring(t_philo_info *list, long int time_start);
@@ -118,7 +114,7 @@ int						usleep_cut(t_philo_attributes *philo,
 							long int time_limit);
 // attribution_forks_and_create_threads.c
 void					attr_forks_philo(t_philo_attributes *philosophers,
-							t_fork *forks, int number_of_philosophers);
+							t_fork *forks, long int number_of_philosophers);
 int						pthread_create_philosophers(t_philo_info *list,
 							long int *time_start);
 #endif
