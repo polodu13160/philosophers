@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/30 19:44:01 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/30 21:02:56 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	init_philos_attributes(t_philo_info *list, long int *time_start)
 	while (i < list->number_of_philosophers)
 	{
 		list->philosophers[i].id = i + 1;
-		list->philosophers[i].number_of_philos = list->number_of_philosophers;
 		list->philosophers[i].time_to_sleep = list->time_to_sleep;
 		list->philosophers[i].time_to_eat = list->time_to_eat;
 		list->philosophers[i].rest_number_eat = \
@@ -59,7 +58,6 @@ list->number_of_times_each_philosopher_must_eat;
 		list->philosophers[i].time_start = time_start;
 		list->philosophers[i].error_time = 0;
 		list->philosophers[i].last_time_to_eat = -2;
-		list->philosophers[i].time_to_die = list->time_to_die;
 		i++;
 	}
 	list->philosophers[i].id = -1;

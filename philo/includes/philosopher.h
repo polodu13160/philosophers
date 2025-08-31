@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 10:39:56 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 08:23:33 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/31 14:22:48 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ typedef struct s_philosopher_attributes
 	long int			time_to_eat;
 	long int			time_to_sleep;
 	long int			rest_number_eat;
+	long int			number_of_philos;
 	long int			id;
 	pthread_mutex_t		*lock_print_action;
 	t_fork				*attr_left_fork;
 	t_fork				*attr_right_fork;
-	long int			number_of_philos;
 	t_action_mutex		*action;
 	long int			*time_start;
 	bool				error_time;
