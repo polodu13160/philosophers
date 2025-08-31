@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:24:49 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/30 17:51:50 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/31 20:00:49 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	destroy_and_free_malloc(t_philo_info *list)
 }
 
 void	*free_destroy_tab_action(t_action_mutex *action,
-		pthread_mutex_t *malloc_action_mutex, int index_mutex_crash,
-		int nb_philo)
+		pthread_mutex_t *malloc_action_mutex, long int index_mutex_crash,
+		long int nb_philo)
 {
-	int	i;
+	long int	i;
 
 	i = 0;
 	if (index_mutex_crash >= 0)
@@ -53,9 +53,9 @@ void	*free_destroy_tab_action(t_action_mutex *action,
 }
 
 void	*free_destoy_tab_forks(t_fork *forks, pthread_mutex_t *lock_mutex,
-		int index_mutex_crash)
+		long int index_mutex_crash)
 {
-	int	i;
+	long int	i;
 
 	i = 0;
 	if (index_mutex_crash >= 0)

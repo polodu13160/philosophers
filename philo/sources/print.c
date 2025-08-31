@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
+/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:11:53 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 16:57:49 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/31 20:19:04 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,17 +98,4 @@ static int	print_message_sleep_and_finish_action(t_philo_attributes *philo,
 	usleep_return_value = usleep_cut(philo, philo->time_to_sleep);
 	pthread_mutex_lock(philo->lock_print_action);
 	return (usleep_return_value);
-}
-
-void	*print_error_time(char *message, t_philo_attributes *philo)
-{
-	perror(message);
-	if (philo != NULL)
-	{
-		philo->error_time = 1;
-		pthread_mutex_lock(philo->action->lock_action);
-		philo->action->action_type = STOP;
-		pthread_mutex_unlock(philo->action->lock_action);
-	}
-	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:16:01 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/30 21:01:30 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/31 20:19:08 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,14 @@ static void	*exit_thread(t_philo_attributes *philo);
 static void	think(t_philo_attributes *philo, long int time_mili_start,
 				bool init);
 
-static void	sleep(t_philo_attributes *philo, long int time_mili_start, int *a);
+static void	sleep_philo(t_philo_attributes *philo, long int time_mili_start,
+				int *a);
 
 void	*while_action_philo(long int time_mili_start, t_philo_attributes *philo)
 {
-	int	a;
+	int	i;
 
-	a = 1;
+	i = 1;
 	think(philo, time_mili_start, 1);
 	if (philo->id % 2 != 0)
 		usleep_cut(philo, philo->time_to_eat / 2);
@@ -32,17 +33,17 @@ void	*while_action_philo(long int time_mili_start, t_philo_attributes *philo)
 		pthread_mutex_lock(philo->action->lock_action);
 		if (philo->action->action_type == STOP)
 			return (exit_thread(philo));
-		if (a == 0)
+		if (i == 0)
 			think(philo, time_mili_start, 0);
-		if (a == 1)
+		if (i == 1)
 		{
 			take_forks(philo, time_mili_start);
 			if (philo->action->action_type != STOP)
 				philo->action->action_type = EAT;
 			lock_mutex_and_print_message(philo, time_mili_start);
 		}
-		if (a++ == 2)
-			sleep(philo, time_mili_start, &a);
+		if (i++ == 2)
+			sleep_philo(philo, time_mili_start, &i);
 		pthread_mutex_unlock(philo->action->lock_action);
 	}
 }
@@ -68,12 +69,13 @@ static void	think(t_philo_attributes *philo, long int time_mili_start,
 		pthread_mutex_unlock(philo->action->lock_action);
 }
 
-static void	sleep(t_philo_attributes *philo, long int time_mili_start, int *a)
+static void	sleep_philo(t_philo_attributes *philo, long int time_mili_start,
+		int *i)
 {
 	if (philo->action->action_type != STOP)
 		philo->action->action_type = SLEEP;
 	lock_mutex_and_print_message(philo, time_mili_start);
-	*a = -1;
+	*i = -1;
 }
 
 int	check_dead_or_stop(t_philo_attributes *philo)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
+/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 02:39:39 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 17:01:36 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/31 20:18:46 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 int	main(int argc, char **argv)
 {
-	int					i;
-	t_philo_info		list;
-	long int			time_start;
-	bool				if_error;
+	int				i;
+	t_philo_info	list;
+	long int		time_start;
+	bool			if_error;
 
 	if_error = 0;
 	if (init_list_info(argv, argc, &list) == 1)
@@ -32,8 +32,6 @@ int	main(int argc, char **argv)
 	while (list.philosophers[i].id != -1)
 	{
 		pthread_join(list.philosophers[i].value_thread, NULL);
-		if (list.philosophers[i].error_time == 1)
-			if_error = 1;
 		i++;
 	}
 	destroy_and_free_malloc(&list);

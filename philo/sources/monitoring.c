@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitoring.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pauldepetrini <pauldepetrini@student.42    +#+  +:+       +#+        */
+/*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 07:23:20 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/29 17:01:09 by pauldepetri      ###   ########.fr       */
+/*   Updated: 2025/08/31 20:04:05 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static bool	philo_check_dead(t_philo_info *list, long int i,
 			- list->philosophers[i].last_time_to_eat) >= list->time_to_die)
 	{
 		pthread_mutex_unlock(&list->lock_print_action);
-		usleep(200);
+		usleep(1000);
 		pthread_mutex_lock(&list->lock_print_action);
 		if (list->philosophers[i].finish != 1
 			&& list->philosophers[i].last_time_to_eat != -2 && (time_now()

@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 08:08:14 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/30 17:57:39 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/08/31 19:59:37 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static void	*to_be_philosopher(void *philo)
 }
 
 void	attr_forks_philo(t_philo_attributes *philosophers, t_fork *forks,
-		int number_of_philosophers)
+		long int number_of_philosophers)
 {
 	int	i;
 
