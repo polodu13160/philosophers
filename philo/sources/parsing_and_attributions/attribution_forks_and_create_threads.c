@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 08:08:14 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/09/06 14:50:11 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/09/06 14:55:33 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ int	pthread_create_philosophers(t_philo_info *list, long int *time_start)
 	long int	temp;
 
 	pthread_mutex_lock(&list->lock_print_action);
-	i = 0;
-	while (list->philosophers[i].id != -1)
+	i = -1;
+	while (list->philosophers[++i].id != -1)
 	{
-		if ( i == 1 || pthread_create(&list->philosophers[i].value_thread, NULL,
+		if (pthread_create(&list->philosophers[i].value_thread, NULL,
 				to_be_philosopher, &list->philosophers[i]) == -1)
 		{
 			temp = i;
@@ -32,12 +32,11 @@ int	pthread_create_philosophers(t_philo_info *list, long int *time_start)
 			i = 0;
 			pthread_mutex_unlock(&list->lock_print_action);
 			while (i < temp)
-				pthread_join(list->philosophers[i++].value_thread, NULL);	
+				pthread_join(list->philosophers[i++].value_thread, NULL);
 			destroy_and_free_malloc(list);
 			pthread_mutex_destroy(&list->lock_print_action);
 			return (1);
 		}
-		i++;
 	}
 	*time_start = time_now();
 	pthread_mutex_unlock(&list->lock_print_action);
