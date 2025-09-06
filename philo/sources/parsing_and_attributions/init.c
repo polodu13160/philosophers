@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:21:10 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/31 20:19:27 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/09/06 16:31:38 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ list->number_of_times_each_philosopher_must_eat;
 		list->philosophers[i].action = &list->action_mutex[i];
 		list->philosophers[i].finish = 0;
 		list->philosophers[i].time_start = time_start;
+		list->philosophers[i].number_of_philos = list->number_of_philosophers;
 		list->philosophers[i].last_time_to_eat = -2;
 		i++;
 	}
