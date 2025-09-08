@@ -6,7 +6,7 @@
 /*   By: pde-petr <pde-petr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 04:11:53 by pde-petr          #+#    #+#             */
-/*   Updated: 2025/08/31 20:19:04 by pde-petr         ###   ########.fr       */
+/*   Updated: 2025/09/08 17:59:57 by pde-petr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static int	print_message_eat_and_finish_action(t_philo_attributes *philo,
 	philo->attr_right_fork->id_philo_take = -1;
 	pthread_mutex_unlock(philo->attr_right_fork->lock_fork);
 	pthread_mutex_lock(philo->lock_print_action);
-	if (philo->rest_number_eat == 0 || philo->last_time_to_eat == -1)
+	if (philo->rest_number_eat == 0)
 		return (1);
 	return (0);
 }
